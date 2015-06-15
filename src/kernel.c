@@ -12,11 +12,13 @@ void kernel_main(void)
     vga_putchar('\n');
     uitoa(255, buf, 16);
     vga_puts(buf);
-    /*for (size_t i = 0; i <= 179; i++)
+    for (size_t i = 0; i <= 17; i++)
     {
-        uitoa(i, buf, 10);
+        itoa(-i, buf, 10);
+        vga_puts(buf);
+        itoa(-i, buf, 16);
         vga_puts(buf);
         vga_putchar('\n');
-    }*/
+    }
     return;
 }

@@ -34,3 +34,19 @@ TEMPLATE_UITOA_DEF(uctoa, unsigned char)
 TEMPLATE_UITOA_DEF(ustoa, unsigned short int)
 TEMPLATE_UITOA_DEF(uitoa, unsigned int)
 TEMPLATE_UITOA_DEF(ultoa, unsigned long int)
+
+#define TEMPLATE_ITOA_DEF(NAME, ITYPE, UINAME) \
+char *NAME(ITYPE num, char *buf, unsigned int radix) \
+{ \
+    if (num < 0) \
+    { \
+        *buf = '-'; \
+        return UINAME(-num, buf + 1, radix); \
+    } \
+    return UINAME(num, buf, radix); \
+}
+
+TEMPLATE_ITOA_DEF(ctoa, char, uctoa)
+TEMPLATE_ITOA_DEF(stoa, short, ustoa)
+TEMPLATE_ITOA_DEF(itoa, int, uitoa)
+TEMPLATE_ITOA_DEF(ltoa, long, ultoa)

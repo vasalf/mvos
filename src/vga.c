@@ -1,6 +1,8 @@
 #include "include/vga.h"
 #include "include/stdstring.h"
 
+#define VGA_BUFFER_INDEX(X, Y) ((Y) * VGA_WIDTH + (X))
+
 uint8_t make_color(enum vga_color fg, enum vga_color bg)
 {
     return fg | (bg << 4);
@@ -9,7 +11,7 @@ uint8_t make_color(enum vga_color fg, enum vga_color bg)
 uint16_t make_vgachar(char c, uint8_t color)
 {
     if (c == '\n')
-        c = '\0';
+        c = ' ';
     return ((uint16_t)c) | ((uint16_t)color << 8);
 }
 
@@ -29,7 +31,7 @@ void vga_init(void)
         for (size_t x = 0; x < VGA_WIDTH; x++)
         {
             const size_t index = y * VGA_WIDTH + x;
-            vga_buffer[index] = make_vgachar('\0', vga_color);
+            vga_buffer[index] = make_vgachar(' ', vga_color);
         }
     }
 }
@@ -41,8 +43,7 @@ void vga_setcolor(uint8_t color)
 
 void vga_putcharat(char c, uint8_t color, size_t x, size_t y)
 {
-    const size_t index = y * VGA_WIDTH + x;
-    vga_buffer[index] = make_vgachar(c, color);
+    vga_buffer[VGA_BUFFER_INDEX(x, y)] = make_vgachar(c, color);
 }
 
 void vga_putchar(char c)
@@ -53,7 +54,12 @@ void vga_putchar(char c)
         vga_column = 0;
         if (++vga_row == VGA_HEIGHT)
         {
-            vga_row = 0;
+            for (size_t i = 0; i < VGA_HEIGHT - 1; i++)
+                for (size_t j = 0; j < VGA_WIDTH; j++)
+                    vga_buffer[VGA_BUFFER_INDEX(j, i)] = vga_buffer[VGA_BUFFER_INDEX(j, i + 1)];
+            for (size_t i = 0; i < VGA_WIDTH; i++)
+                vga_putcharat(' ', vga_color, i, VGA_HEIGHT - 1);
+            --vga_row;
         }
     }
 }

@@ -1,29 +1,57 @@
-all: kernel iso clean_compilation
+OBJDIR=./.tmp
+ISODIR=./isodir
+SRCDIR=./src
 
-compile_kernel:
-	if [ ! -d ".tmp" ]; then mkdir .tmp; fi
-	# Compile GAS files
-	i686-elf-as     ./src/boot.s     -o ./.tmp/boot.o
-	# Compile C files
-	i686-elf-gcc    ./src/kernel.c      -o ./.tmp/kernel.o      -c --std=c99 -ffreestanding -O2 -Wall -Wextra -Wshadow -Werror
-	i686-elf-gcc    ./src/stdstring.c   -o ./.tmp/stdstring.o   -c --std=c99 -ffreestanding -O2 -Wall -Wextra -Wshadow -Werror
-	i686-elf-gcc    ./src/vga.c         -o ./.tmp/vga.o         -c --std=c99 -ffreestanding -O2 -Wall -Wextra -Wshadow -Werror
+CC=i686-elf-gcc
+CFLAGS=--std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding
+LFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
+AS=i686-elf-as
+ASFLAGS=
 
-link_kernel:
-	i686-elf-gcc -T ./src/linker.ld -ffreestanding -O2 -nostdlib -lgcc ./.tmp/stdstring.o ./.tmp/vga.o ./.tmp/boot.o ./.tmp/kernel.o -o kernel.bin
+OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/stdstring.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o
 
-kernel: compile_kernel link_kernel
 
-iso:
-	mkdir -p ./isodir/boot/grub
-	mv kernel.bin ./isodir/boot/kernel.bin
-	cp grub.cfg ./isodir/boot/grub/grub.cfg
-	grub2-mkrescue -o mvos.iso isodir
+all: iso clean_compilation
+
+
+iso: kernel
+	mkdir -p $(ISODIR)/boot/grub
+	mv kernel.bin $(ISODIR)/boot/kernel.bin
+	cp grub.cfg $(ISODIR)/boot/grub/grub.cfg
+	grub2-mkrescue -o mvos.iso $(ISODIR)
+
+
+kernel: $(OBJDIR) $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o kernel.bin
+
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+
+$(OBJDIR)/kernel.o: $(SRCDIR)/kernel.c
+	$(CC)  $(CFLAGS) -c $(SRCDIR)/kernel.c -o $(OBJDIR)/kernel.o
+
+
+$(OBJDIR)/stdstring.o: $(SRCDIR)/stdstring.c
+	$(CC)  $(CFLAGS) -c $(SRCDIR)/stdstring.c -o $(OBJDIR)/stdstring.o
+	
+
+$(OBJDIR)/vga.o: $(SRCDIR)/vga.c
+	$(CC)  $(CFLAGS) -c $(SRCDIR)/vga.c -o $(OBJDIR)/vga.o
+
+
+$(OBJDIR)/boot.o: $(SRCDIR)/boot.s
+	$(AS) $(ASFLAGS) $(SRCDIR)/boot.s -o $(OBJDIR)/boot.o
+
 
 clean_compilation:
-	rm -Rf .tmp isodir
+	rm -rf $(ISODIR)
+
 
 clean: clean_compilation
+	rm -rf $(OBJDIR)
 	rm -f mvos.iso
 
-.PHONY: all clean
+
+.PHONY: all clean_compilation clean

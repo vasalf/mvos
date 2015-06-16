@@ -8,7 +8,7 @@ LFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 AS=i686-elf-as
 ASFLAGS=
 
-OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/stdstring.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o
+OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/stdstring.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o
 
 
 all: iso clean_compilation
@@ -33,16 +33,28 @@ $(OBJDIR)/kernel.o: $(SRCDIR)/kernel.c
 	$(CC)  $(CFLAGS) -c $(SRCDIR)/kernel.c -o $(OBJDIR)/kernel.o
 
 
-$(OBJDIR)/stdstring.o: $(SRCDIR)/stdstring.c
+$(OBJDIR)/stdstring.o: $(SRCDIR)/stdstring.c $(SRCDIR)/include/stdstring.h
 	$(CC)  $(CFLAGS) -c $(SRCDIR)/stdstring.c -o $(OBJDIR)/stdstring.o
 	
 
-$(OBJDIR)/vga.o: $(SRCDIR)/vga.c
+$(OBJDIR)/vga.o: $(SRCDIR)/vga.c $(SRCDIR)/include/vga.h
 	$(CC)  $(CFLAGS) -c $(SRCDIR)/vga.c -o $(OBJDIR)/vga.o
+
+
+$(OBJDIR)/ports.o: $(SRCDIR)/ports.c $(SRCDIR)/include/ports.h
+	$(CC)  $(CFLAGS) -c $(SRCDIR)/ports.c -o $(OBJDIR)/ports.o
+
+
+$(OBJDIR)/system.o: $(SRCDIR)/system.c $(SRCDIR)/include/system.h
+	$(CC)  $(CFLAGS) -c $(SRCDIR)/system.c -o $(OBJDIR)/system.o
 
 
 $(OBJDIR)/boot.o: $(SRCDIR)/boot.s
 	$(AS) $(ASFLAGS) $(SRCDIR)/boot.s -o $(OBJDIR)/boot.o
+
+
+$(OBJDIR)/keyboard.o: $(SRCDIR)/keyboard.c $(SRCDIR)/include/keyboard.h
+	$(CC) $(CFLAGS) -c $(SRCDIR)/keyboard.c -o $(OBJDIR)/keyboard.o
 
 
 clean_compilation:

@@ -8,7 +8,7 @@ LFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 AS=i686-elf-as
 ASFLAGS=
 
-OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/stdstring.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o
+OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/stdstring.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o $(OBJDIR)/dbg.o
 
 
 all: iso clean_compilation
@@ -56,6 +56,8 @@ $(OBJDIR)/boot.o: $(SRCDIR)/boot.s
 $(OBJDIR)/keyboard.o: $(SRCDIR)/keyboard.c $(SRCDIR)/include/keyboard.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/keyboard.c -o $(OBJDIR)/keyboard.o
 
+$(OBJDIR)/dbg.o: $(SRCDIR)/dbg.s $(SRCDIR)/include/dbg.h
+	$(AS) $(ASFLAGS) $(SRCDIR)/dbg.s -o $(OBJDIR)/dbg.o
 
 clean_compilation:
 	rm -rf $(ISODIR)

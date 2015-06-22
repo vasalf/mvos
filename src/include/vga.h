@@ -27,8 +27,8 @@ enum vga_color
 uint8_t make_color(enum vga_color fg, enum vga_color bg);
 uint16_t make_vgachar(char c, uint8_t color);
 
-static const size_t VGA_HEIGHT = 25;
-static const size_t VGA_WIDTH = 80;
+extern const size_t VGA_HEIGHT;
+extern const size_t VGA_WIDTH;
 
 void vga_init(void);
 void vga_setcolor(uint8_t color);

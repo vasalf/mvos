@@ -1,5 +1,9 @@
 #include "include/vga.h"
 #include "include/stdstring.h"
+#include "include/ports.h"
+
+const size_t VGA_WIDTH = 80;
+const size_t VGA_HEIGHT = 25;
 
 #define VGA_BUFFER_INDEX(X, Y) ((Y) * VGA_WIDTH + (X))
 
@@ -25,7 +29,7 @@ void vga_init(void)
     vga_row = 0;
     vga_column = 0;
     vga_color = make_color(COLOR_WHITE, COLOR_BLACK);
-    vga_buffer = (uint16_t*)0xB8000;
+    vga_buffer = (uint16_t*)0xb8000;
     for (size_t y = 0; y < VGA_HEIGHT; y++)
     {
         for (size_t x = 0; x < VGA_WIDTH; x++)
@@ -46,6 +50,15 @@ void vga_putcharat(char c, uint8_t color, size_t x, size_t y)
     vga_buffer[VGA_BUFFER_INDEX(x, y)] = make_vgachar(c, color);
 }
 
+void vga_move_cursor(size_t x, size_t y)
+{
+    uint16_t position = VGA_BUFFER_INDEX(y, x);
+    send_to_port(0x3d4, 0xf);
+    send_to_port(0x3d5, (uint8_t)(position & 0xff));
+    send_to_port(0x3d4, 0xe);
+    send_to_port(0x3d5, (uint8_t)((position >> 8) & 0xff));
+}
+
 void vga_putchar(char c)
 {
     vga_putcharat(c, vga_color, vga_column, vga_row);
@@ -62,6 +75,7 @@ void vga_putchar(char c)
             --vga_row;
         }
     }
+    vga_move_cursor(vga_row, vga_column);
 }
 
 void vga_puts(const char* data)

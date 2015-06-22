@@ -1,4 +1,6 @@
-unsigned char read_from_port(unsigned short port);
-void send_to_port(unsigned short port, unsigned char to_send);
-unsigned char get_response(unsigned short port, unsigned char to_send);
+#include <stdint.h>
+
+uint8_t read_from_port(uint16_t port);
+void send_to_port(uint16_t port, uint8_t to_send);
+uint8_t get_response(uint16_t port, uint8_t to_send);
 

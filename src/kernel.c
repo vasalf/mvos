@@ -3,13 +3,12 @@
 #include "include/vga.h"
 #include "include/stdstring.h"
 #include "include/ports.h"
-#include "include/keyboard.h"
 #include "include/dbg.h"
+#include "include/init.h"
 
 void kernel_main(void)
 {
-    vga_init();
-    detect_keyboard();
+    init_all();
     vga_puts("Kernel loaded\n");
     int eipreg;
     get_eip();
@@ -25,5 +24,7 @@ void kernel_main(void)
     itoa(cr0reg, buf, 2);
     vga_puts(buf);
     vga_puts("\n");
+    __asm__ __volatile__ ("sti");
+    vga_puts("Interrupts enabled\n");
     return;
 }

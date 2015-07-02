@@ -8,7 +8,7 @@ LFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 AS=i686-elf-as
 ASFLAGS=
 
-OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/stdstring.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o $(OBJDIR)/dbg.o
+OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/stdstring.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o $(OBJDIR)/dbg.o $(OBJDIR)/init.o $(OBJDIR)/idt_load.o $(OBJDIR)/wrappers.o $(OBJDIR)/idt.o
 
 
 all: iso clean_compilation
@@ -52,12 +52,24 @@ $(OBJDIR)/system.o: $(SRCDIR)/system.c $(SRCDIR)/include/system.h
 $(OBJDIR)/boot.o: $(SRCDIR)/boot.s
 	$(AS) $(ASFLAGS) $(SRCDIR)/boot.s -o $(OBJDIR)/boot.o
 
-
 $(OBJDIR)/keyboard.o: $(SRCDIR)/keyboard.c $(SRCDIR)/include/keyboard.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/keyboard.c -o $(OBJDIR)/keyboard.o
 
 $(OBJDIR)/dbg.o: $(SRCDIR)/dbg.s $(SRCDIR)/include/dbg.h
 	$(AS) $(ASFLAGS) $(SRCDIR)/dbg.s -o $(OBJDIR)/dbg.o
+
+$(OBJDIR)/init.o: $(SRCDIR)/init.c $(SRCDIR)/include/init.h
+	$(CC) $(CFLAGS) -c $(SRCDIR)/init.c -o $(OBJDIR)/init.o
+
+$(OBJDIR)/idt_load.o: $(SRCDIR)/idt_load.s
+	$(AS) $(ASFLAGS) $(SRCDIR)/idt_load.s -o $(OBJDIR)/idt_load.o
+
+$(OBJDIR)/wrappers.o: $(SRCDIR)/wrappers.s
+	$(AS) $(ASFLAGS) -c $(SRCDIR)/wrappers.s -o $(OBJDIR)/wrappers.o
+
+$(OBJDIR)/idt.o: $(SRCDIR)/idt.c $(SRCDIR)/include/idt.h
+	$(CC) $(CFLAGS) -c $(SRCDIR)/idt.c -o $(OBJDIR)/idt.o
+
 
 clean_compilation:
 	rm -rf $(ISODIR)

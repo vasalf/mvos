@@ -3,6 +3,9 @@
 #include "include/vga.h"
 #include "include/system.h"
 #include "include/stdstring.h"
+#include "include/idt.h"
+
+extern void _wrap_keyboard_handler();
 
 void print_hex_char(unsigned char c)
 {
@@ -11,7 +14,6 @@ void print_hex_char(unsigned char c)
     uctoa(c, buf, 16);
     vga_puts(buf);
 }
-
 
 void detect_keyboard()
 {
@@ -56,4 +58,29 @@ void detect_keyboard()
         }
     }
     panic("No keyboards found");
+}
+
+void keyboard_handler()
+{
+    vga_puts("keyboard_handler called.\n");
+    uint8_t signal = read_from_port(keyboard_port);
+    vga_puts("Keyboard sent ");
+    print_hex_char(signal);
+    vga_puts(".\n");
+}
+
+void init_keyboard()
+{
+    detect_keyboard();
+    set_idt_descriptor(33, &_wrap_keyboard_handler);
+    vga_puts("Added descriptor.\n");
+    vga_puts("_wrap_keyboard_handler address is 0x");
+    char buf[10];
+    uitoa((uint32_t)&_wrap_keyboard_handler, buf, 16);
+    vga_puts(buf);
+    vga_puts("\n");
+    vga_puts("keyboard_handler address is 0x");
+    uitoa((uint32_t)&keyboard_handler, buf, 16);
+    vga_puts(buf);
+    vga_puts("\n");
 }

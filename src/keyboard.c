@@ -69,13 +69,24 @@ void keyboard_handler()
     vga_puts(".\n");
 }
 
+extern void get_eip();
+
 void init_keyboard()
 {
-    detect_keyboard();
-    set_idt_descriptor(33, &_wrap_keyboard_handler);
+    //detect_keyboard();
+    keyboard_port = 0x60;
+    vga_puts("In init_keyboard()\n");
+    int eipreg;
+    get_eip();
+    __asm__ __volatile__ ("movl %%ebx, %%eax" : "=a"(eipreg));
+    vga_puts("EIP: 0x");
+    char buf[10];
+    itoa(eipreg, buf, 16);
+    vga_puts(buf);
+    vga_puts("\n");
+    set_idt_descriptor(33, _wrap_keyboard_handler);
     vga_puts("Added descriptor.\n");
     vga_puts("_wrap_keyboard_handler address is 0x");
-    char buf[10];
     uitoa((uint32_t)&_wrap_keyboard_handler, buf, 16);
     vga_puts(buf);
     vga_puts("\n");

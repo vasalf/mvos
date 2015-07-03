@@ -7,13 +7,13 @@ struct IDT_descriptor
     uint8_t zero; //reserved, must be zero
     uint8_t attributes;
     uint16_t higher_offset;
-};
+} __attribute__((packed));
 
 struct IDT_pointer
 {
     uint16_t size;
     uint32_t base;
-};
+} __attribute__((packed));
 
 void idt_init();
 void set_idt_descriptor(uint16_t num, void* interrupt_wrapper);

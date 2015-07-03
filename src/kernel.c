@@ -26,5 +26,6 @@ void kernel_main(void)
     vga_puts("\n");
     __asm__ __volatile__ ("sti");
     vga_puts("Interrupts enabled\n");
+    for(;;);
     return;
 }

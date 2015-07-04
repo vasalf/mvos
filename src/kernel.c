@@ -21,13 +21,9 @@ void kernel_main(void)
     vga_puts(buf);
     vga_puts("\n");
     vga_puts("Interrupts enabled\n");
-<<<<<<< HEAD
-    for(;;);
-=======
     __asm__ __volatile__ ("sti");
     for (;;) {
         __asm__ __volatile__ ("hlt\n");
     }
->>>>>>> benny
     return;
 }

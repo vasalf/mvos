@@ -1,4 +1,4 @@
-#include "include/stdstring.h"
+#include "include/string.h"
 
 size_t strlen(const char *str)
 {
@@ -30,8 +30,8 @@ char *NAME(ITYPE num, char *buf, unsigned int radix) \
     return next; \
 }
 
-TEMPLATE_UITOA_DEF(uctoa, unsigned char)
-TEMPLATE_UITOA_DEF(ustoa, unsigned short int)
+TEMPLATE_UITOA_DEF(uhhtoa, unsigned char)
+TEMPLATE_UITOA_DEF(uhtoa, unsigned short int)
 TEMPLATE_UITOA_DEF(uitoa, unsigned int)
 TEMPLATE_UITOA_DEF(ultoa, unsigned long int)
 
@@ -46,7 +46,7 @@ char *NAME(ITYPE num, char *buf, unsigned int radix) \
     return UINAME(num, buf, radix); \
 }
 
-TEMPLATE_ITOA_DEF(ctoa, char, uctoa)
-TEMPLATE_ITOA_DEF(stoa, short, ustoa)
+TEMPLATE_ITOA_DEF(hhtoa, char, uhhtoa)
+TEMPLATE_ITOA_DEF(htoa, short int, uhtoa)
 TEMPLATE_ITOA_DEF(itoa, int, uitoa)
-TEMPLATE_ITOA_DEF(ltoa, long, ultoa)
+TEMPLATE_ITOA_DEF(ltoa, long int, ultoa)

@@ -1,8 +1,9 @@
-#ifndef __VGA_H
-#define __VGA_H
+#ifndef VGA_H
+#define VGA_H
 
 #include <stdint.h>
 #include <stddef.h>
+
 
 enum vga_color 
 {
@@ -30,10 +31,10 @@ uint16_t make_vgachar(char c, uint8_t color);
 extern const size_t VGA_HEIGHT;
 extern const size_t VGA_WIDTH;
 
-void vga_init(void);
+void init_vga(void);
 void vga_setcolor(uint8_t color);
 void vga_putcharat(char c, uint8_t color, size_t x, size_t y);
 void vga_putchar(char c);
-void vga_puts(const char* str);
+void vga_puts(const char *str);
 
 #endif

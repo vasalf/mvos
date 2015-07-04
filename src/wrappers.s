@@ -1,11 +1,11 @@
 .section .text
 
-.globl _wrap_keyboard_handler
-.type _wrap_keyboard_handler, @function
+.globl _asm_keyboard_isr
+.type _asm_keyboard_isr, @function
 
-_wrap_keyboard_handler:
+_asm_keyboard_isr:
     pusha
-    cld
-    call keyboard_handler
+    movl $0xdeadbeef, 0x0
+    hlt
     popa
     iret

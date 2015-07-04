@@ -1,19 +1,25 @@
+#ifndef IDT_H
+#define IDT_H
+
 #include <stdint.h>
 
-struct IDT_descriptor
-{
-    uint16_t lower_offset;
-    uint16_t selector;
-    uint8_t zero; //reserved, must be zero
-    uint8_t attributes;
-    uint16_t higher_offset;
-};
 
-struct IDT_pointer
+struct idt_descriptor
+{
+    uint16_t base_low;
+    uint16_t selector;
+    uint8_t zero;
+    uint8_t flags;
+    uint16_t base_high;
+} __attribute__((packed));
+
+struct idt_pointer
 {
     uint16_t size;
     uint32_t base;
-};
+} __attribute__((packed));
 
-void idt_init();
-void set_idt_descriptor(uint16_t num, void* interrupt_wrapper);
+void init_idt(void);
+void set_idt_descriptor(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
+
+#endif

@@ -1,38 +1,40 @@
-#include "include/ports.h"
 #include "include/keyboard.h"
+#include "include/wrappers.h"
+#include "include/ports.h"
 #include "include/vga.h"
 #include "include/system.h"
-#include "include/stdstring.h"
+#include "include/string.h"
+#include "include/pic.h"
 #include "include/idt.h"
 
-extern void _wrap_keyboard_handler();
+uint16_t keyboard_port;
 
-void print_hex_char(unsigned char c)
+static void print_hex_char(unsigned char c)
 {
     vga_puts("0x");
     char buf[2];
-    uctoa(c, buf, 16);
+    uhhtoa(c, buf, 16);
     vga_puts(buf);
 }
 
-void detect_keyboard()
+static void detect_keyboard(void)
 {
     for (unsigned short port = 0; port < 0x100; port++)
     {
         if (port != 0xa0)
         {
-            if (get_response(port, 0xee) == 0xee && get_response(port, 0xf5) == 0xfa)
+            if (iob(port, 0xee) == 0xee && iob(port, 0xf5) == 0xfa)
             {
                 unsigned char t1 = 0, t2 = 0, t3 = 0;
-                t1 = get_response(port, 0xf2);
+                t1 = iob(port, 0xf2);
                 if (t1 != 0xfa)
                     continue;
-                t1 = read_from_port(port);
+                t1 = inb(port);
                 if (t1 == 0xab)
                 {
-                    t2 = read_from_port(port);
+                    t2 = inb(port);
                     if (t2 == 0xab || t2 == 0x41)
-                        t3 = read_from_port(port);
+                        t3 = inb(port);
                 }
                 if (t1 == 0x00 || t1 == 0xab)
                 {
@@ -60,27 +62,28 @@ void detect_keyboard()
     panic("No keyboards found");
 }
 
-void keyboard_handler()
+void keyboard_isr()
 {
     vga_puts("keyboard_handler called.\n");
-    uint8_t signal = read_from_port(keyboard_port);
+    uint8_t signal = inb(keyboard_port);
     vga_puts("Keyboard sent ");
     print_hex_char(signal);
     vga_puts(".\n");
+    pic_eoi(1);
 }
 
-void init_keyboard()
+void init_keyboard(void)
 {
-    detect_keyboard();
-    set_idt_descriptor(33, &_wrap_keyboard_handler);
+    //detect_keyboard();
+    keyboard_port = 0x60;
     vga_puts("Added descriptor.\n");
-    vga_puts("_wrap_keyboard_handler address is 0x");
+    vga_puts("_asm_keyboard_isr address is 0x");
     char buf[10];
-    uitoa((uint32_t)&_wrap_keyboard_handler, buf, 16);
+    uitoa((uint32_t)_asm_keyboard_isr, buf, 16);
     vga_puts(buf);
     vga_puts("\n");
-    vga_puts("keyboard_handler address is 0x");
-    uitoa((uint32_t)&keyboard_handler, buf, 16);
+    vga_puts("keyboard_isr address is 0x");
+    uitoa((uint32_t)keyboard_isr, buf, 16);
     vga_puts(buf);
     vga_puts("\n");
 }

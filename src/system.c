@@ -1,15 +1,14 @@
-#include <stdint.h>
 #include "include/system.h"
 #include "include/vga.h"
-#include "include/init.h"
+#include "include/panic.h"
+#include <stdint.h>
 
-void panic(char* buf)
+
+void panic(char *msg)
 {
     vga_puts("KERNEL PANIC: ");
-    vga_puts(buf);
-    __asm__ __volatile__("cli");
-    __asm__ __volatile__("hlt");
-    for (;;);
+    vga_puts(msg);
+    _asm_panic();
 }
 
 

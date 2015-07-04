@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 
-void panic(char *msg);
+#define panic(msg) _panic(msg, __FILE__, __LINE__)
+void _panic(char *msg, char *file, int line);
 
 #endif

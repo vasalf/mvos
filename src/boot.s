@@ -21,16 +21,13 @@ stack_top:
 .section .text
 .global _start
 .type _start, @function
-_start:
-    movl $stack_top, %esp
-    call kernel_main
-    cli
-    hlt
-
-.Lhang:
-    jmp .Lhang
+_start: movl    $stack_top,     %esp
+        cli
+        call    kernel_main
+        cli
+.Lhlt:  hlt
+        jmp     .Lhlt
 
 .size _start, . - _start
 
-/* vim: asmsyntax=gas : 
-*/
+# vim: ft=gas:

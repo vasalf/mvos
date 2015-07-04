@@ -1,15 +1,25 @@
-#include <stdint.h>
-#include "include/system.h"
-#include "include/vga.h"
-#include "include/init.h"
+#include <system.h>
+#include <vga.h>
+#include <string.h>
 
-void panic(char* buf)
+void _panic(char *msg, char *file, int line)
 {
-    vga_puts("KERNEL PANIC: ");
+    char buf[10];
+    uitoa(line, buf, 10);
+    vga_puts(file);
+    vga_puts(":");
     vga_puts(buf);
-    __asm__ __volatile__("cli");
-    __asm__ __volatile__("hlt");
-    for (;;);
+    vga_puts(": ");
+    __asm__ __volatile__ ("cli");
+    if (msg) {
+        vga_puts("KERNEL PANIC: ");
+        vga_puts(msg);
+    } else {
+        vga_puts("KERNEL PANIC");
+    }
+    for (;;) {
+        __asm__ __volatile__ ("hlt");
+    }
 }
 
 

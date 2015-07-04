@@ -1,48 +1,51 @@
-#include "include/idt.h"
-#include "include/ports.h"
+#include <idt.h>
+#include <asm_isr.h>
+#include <asm_irq.h>
+#include <lidt.h>
+#include <system.h>
 
-struct IDT_descriptor idtd[256];
-struct IDT_pointer idtp;
+struct idt_descriptor idtd[256];
+struct idt_pointer idtp;
 
-void irq_remap()
+void init_idt(void)
 {
-    send_to_port(0x20, 0x11); 
-    send_to_port(0xa0, 0x11);
-    send_to_port(0x21, 0x20);
-    send_to_port(0xa1, 0x28);
-    send_to_port(0x21, 0x04);
-    send_to_port(0xa1, 0x02);
-    send_to_port(0x21, 0x01);
-    send_to_port(0xa1, 0x01);
-    send_to_port(0x21, 0x0);
-    send_to_port(0xa1, 0x0);
-}
-
-extern void idt_load();
-
-void idt_init()
-{
-    irq_remap();
     for (int i = 0; i < 256; i++)
     {
-        idtd[i].lower_offset = 0;
+        idtd[i].base_low = 0;
         idtd[i].selector = 0;
         idtd[i].zero = 0;
-        idtd[i].attributes = 0;
-        idtd[i].higher_offset = 0;
+        idtd[i].flags = 0;
+        idtd[i].base_high = 0;
     }
-    idtp.size = sizeof(struct IDT_descriptor) * 256 - 1;
-    idtp.base = (uint32_t)idtd;
-    idt_load();
+    idtp.size = sizeof(struct idt_descriptor) * 256 - 1;
+    idtp.base = (uint32_t) &idtd;
+    if (sizeof(struct idt_descriptor) != 8) {
+        panic("sizeof(struct idt_descriptor) must be 8\n");
+    }
+    for (int i = 0; i < 0x20; ++i) {
+        idt_set_descriptor(i, (uint32_t) _asm_isr_default_noerror, 0x08, 0x8E);
+    }
+    idt_set_descriptor(8, (uint32_t) _asm_isr_default, 0x08, 0x8E);
+    idt_set_descriptor(10, (uint32_t) _asm_isr_default, 0x08, 0x8E);
+    idt_set_descriptor(11, (uint32_t) _asm_isr_default, 0x08, 0x8E);
+    idt_set_descriptor(12, (uint32_t) _asm_isr_default, 0x08, 0x8E);
+    idt_set_descriptor(13, (uint32_t) _asm_isr_default, 0x08, 0x8E);
+    idt_set_descriptor(14, (uint32_t) _asm_isr_default, 0x08, 0x8E);
+    for (int i = 0x21; i < 0x28; ++i) {
+        idt_set_descriptor(i, (uint32_t) _asm_irq_default_master, 0x08, 0x8E);
+    }
+    for (int i = 0x28; i < 0x30; ++i) {
+        idt_set_descriptor(i, (uint32_t) _asm_irq_default_slave, 0x08, 0x8E);
+    }
+
+    _asm_lidt();
 }
 
-void set_idt_descriptor(uint16_t num, void* interrupt_wrapper)
+void idt_set_descriptor(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
 {
-    uint32_t casted_iw_addr = (uint32_t)interrupt_wrapper;
-    idtd[num].lower_offset = (casted_iw_addr & 0xffff);
-//    idtd[num].selector = SELECTOR(0, 1, num);
-    idtd[num].selector = 0x08;
+    idtd[num].base_low = base & 0xFFFF;
+    idtd[num].base_high = (base >> 16) & 0xFFFF;
+    idtd[num].selector = sel;
     idtd[num].zero = 0;
-    idtd[num].attributes = 0x8e;//INTERRUPT_GATE_ATTRIBUTES;
-    idtd[num].higher_offset = ((casted_iw_addr >> 16) & 0xffff);
+    idtd[num].flags = flags;
 }

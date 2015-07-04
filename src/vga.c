@@ -1,6 +1,6 @@
-#include "include/vga.h"
-#include "include/stdstring.h"
-#include "include/ports.h"
+#include <vga.h>
+#include <string.h>
+#include <ports.h>
 
 const size_t VGA_WIDTH = 80;
 const size_t VGA_HEIGHT = 25;
@@ -24,7 +24,7 @@ static size_t vga_column;
 static uint8_t vga_color;
 static uint16_t* vga_buffer;
 
-void vga_init(void)
+void init_vga(void)
 {
     vga_row = 0;
     vga_column = 0;
@@ -53,14 +53,18 @@ void vga_putcharat(char c, uint8_t color, size_t x, size_t y)
 void vga_move_cursor(size_t x, size_t y)
 {
     uint16_t position = VGA_BUFFER_INDEX(y, x);
-    send_to_port(0x3d4, 0xf);
-    send_to_port(0x3d5, (uint8_t)(position & 0xff));
-    send_to_port(0x3d4, 0xe);
-    send_to_port(0x3d5, (uint8_t)((position >> 8) & 0xff));
+    outb(0x3d4, 0xf);
+    outb(0x3d5, (uint8_t)(position & 0xff));
+    outb(0x3d4, 0xe);
+    outb(0x3d5, (uint8_t)((position >> 8) & 0xff));
 }
 
 void vga_putchar(char c)
 {
+    if (c == '\r') {
+        vga_column = 0;
+        return;
+    }
     vga_putcharat(c, vga_color, vga_column, vga_row);
     if (++vga_column == VGA_WIDTH || c == '\n')
     {

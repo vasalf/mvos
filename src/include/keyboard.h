@@ -1,5 +1,13 @@
-short int keyboard_port;
+#ifndef KEYBOARD_H
+#define KEYBOARD_H
 
-void detect_keyboard();
-void keyboard_handler();
-void init_keyboard();
+
+#include <stdint.h>
+#include <isr.h>
+
+extern uint16_t keyboard_port;
+
+void init_keyboard(void);
+void keyboard_irq(registers_t regs);
+
+#endif

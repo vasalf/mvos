@@ -53,6 +53,8 @@ isr_noerror 32
 isr_noerror 33
 
 isr_common_stub:
+        push    $0
+        call    panic
         pusha
         
         mov     %ds,        %ax
@@ -65,7 +67,7 @@ isr_common_stub:
         mov     %ax,        %gs
         
         cld
-        call    common_isr_handler
+        call    isr_common_handler
 
         pop     %eax
         mov     %ax,        %ds

@@ -8,7 +8,7 @@ LFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 AS=i686-elf-as
 ASFLAGS=
 
-OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/string.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/panic.o $(OBJDIR)/keyboard.o $(OBJDIR)/registers.o $(OBJDIR)/init.o $(OBJDIR)/lidt.o $(OBJDIR)/lgdt.o $(OBJDIR)/wrappers.o $(OBJDIR)/idt.o $(OBJDIR)/gdt.o $(OBJDIR)/pic.o $(OBJDIR)/asm_isr.o $(OBJDIR)/isr.o $(OBJDIR)/asm_irq.o $(OBJDIR)/irq.o $(OBJDIR)/timer.o
+OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/string.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o $(OBJDIR)/registers.o $(OBJDIR)/init.o $(OBJDIR)/lidt.o $(OBJDIR)/lgdt.o $(OBJDIR)/idt.o $(OBJDIR)/gdt.o $(OBJDIR)/pic.o $(OBJDIR)/asm_isr.o $(OBJDIR)/isr.o $(OBJDIR)/asm_irq.o $(OBJDIR)/irq.o $(OBJDIR)/timer.o
 
 all: iso
 
@@ -41,9 +41,6 @@ $(OBJDIR)/ports.o: $(SRCDIR)/ports.c $(SRCDIR)/include/ports.h
 $(OBJDIR)/system.o: $(SRCDIR)/system.c $(SRCDIR)/include/system.h
 	$(CC)  $(CFLAGS) -c $(SRCDIR)/system.c -o $(OBJDIR)/system.o
 
-$(OBJDIR)/panic.o: $(SRCDIR)/panic.s $(SRCDIR)/include/panic.h
-	$(AS)  $(ASFLAGS) $(SRCDIR)/panic.s -o $(OBJDIR)/panic.o
-
 $(OBJDIR)/boot.o: $(SRCDIR)/boot.s
 	$(AS) $(ASFLAGS) $(SRCDIR)/boot.s -o $(OBJDIR)/boot.o
 
@@ -58,9 +55,6 @@ $(OBJDIR)/init.o: $(SRCDIR)/init.c $(SRCDIR)/include/init.h
 
 $(OBJDIR)/lidt.o: $(SRCDIR)/lidt.s
 	$(AS) $(ASFLAGS) $(SRCDIR)/lidt.s -o $(OBJDIR)/lidt.o
-
-$(OBJDIR)/wrappers.o: $(SRCDIR)/wrappers.s
-	$(AS) $(ASFLAGS) -c $(SRCDIR)/wrappers.s -o $(OBJDIR)/wrappers.o
 
 $(OBJDIR)/idt.o: $(SRCDIR)/idt.c $(SRCDIR)/include/idt.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/idt.c -o $(OBJDIR)/idt.o
@@ -80,11 +74,11 @@ $(OBJDIR)/isr.o: $(SRCDIR)/isr.c $(SRCDIR)/include/isr.h
 $(OBJDIR)/asm_isr.o: $(SRCDIR)/asm_isr.s $(SRCDIR)/include/asm_isr.h
 	$(AS) $(ASFLAGS) $(SRCDIR)/asm_isr.s -o $(OBJDIR)/asm_isr.o
 
-$(OBJDIR)/irq.o: $(SRCDIR)/irq.c $(SRCDIR)/include/irq.h
-	$(CC) $(CFLAGS) -c $(SRCDIR)/irq.c -o $(OBJDIR)/irq.o
-
 $(OBJDIR)/asm_irq.o: $(SRCDIR)/asm_irq.s $(SRCDIR)/include/asm_irq.h
 	$(AS) $(ASFLAGS) $(SRCDIR)/asm_irq.s -o $(OBJDIR)/asm_irq.o
+
+$(OBJDIR)/irq.o: $(SRCDIR)/irq.c $(SRCDIR)/include/irq.h
+	$(CC) $(CFLAGS) -c $(SRCDIR)/irq.c -o $(OBJDIR)/irq.o
 
 $(OBJDIR)/timer.o: $(SRCDIR)/timer.c $(SRCDIR)/include/timer.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/timer.c -o $(OBJDIR)/timer.o

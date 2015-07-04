@@ -28,9 +28,11 @@ typedef struct registers {
     uint32_t int_no, err;
     uint32_t eip, cs, eflags, user_esp, ss;
 } registers_t;
-
 typedef void (*isr_t)(registers_t);
-void common_isr_handler(registers_t regs);
+
+void isr_common_handler(registers_t regs);
+void isr_register_handler(int num, isr_t handler);
+void isr_deregister_handler(int num);
 
 isr_t isr_handlers[256];
 

@@ -38,7 +38,7 @@ irq_common_stub:
         mov     %ax,        %gs
         
         cld
-        call    irq_handler
+        call    irq_common_handler
 
         pop     %ebx
         mov     %bx,        %ds

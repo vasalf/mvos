@@ -20,6 +20,6 @@ struct idt_pointer
 } __attribute__((packed));
 
 void init_idt(void);
-void set_idt_descriptor(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
+void idt_set_descriptor(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
 
 #endif

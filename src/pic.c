@@ -26,17 +26,10 @@ void pic_remap(int offset1, int offset2) {
     outb(PIC2_COMMAND, ICW4);
     io_wait();
 
-    outb(PIC1_DATA, 0x0);
+    outb(PIC1_DATA, 0x00);
     io_wait();
-    outb(PIC2_DATA, 0x0);
+    outb(PIC2_DATA, 0x00);
     io_wait();
-}
-
-void pic_eoi(uint8_t irq) {
-    if (irq >= 8) {
-        outb(PIC2_DATA, PIC_EOI);
-    }
-    outb(PIC1_DATA, PIC_EOI);
 }
 
 void pic_mask(uint8_t irq) {

@@ -4,7 +4,7 @@
 #include "include/vga.h"
 #include "include/string.h"
 
-void common_isr_handler(struct registers regs) {
+void isr_common_handler(struct registers regs) {
     if (isr_handlers[regs.int_no] != 0) {
         isr_handlers[regs.int_no](regs);
     } else {
@@ -14,4 +14,14 @@ void common_isr_handler(struct registers regs) {
         vga_puts(s);
         vga_puts("\n");
     }
+}
+
+void isr_register_handler(int num, isr_t handler) {
+    isr_handlers[num] = handler;
+    pic_mask(num);
+}
+
+void isr_deregister_handler(int num) {
+    isr_handlers[num] = 0;
+    pic_unmask(num);
 }

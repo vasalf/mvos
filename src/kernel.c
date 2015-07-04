@@ -5,7 +5,6 @@
 #include "include/ports.h"
 #include "include/registers.h"
 #include "include/init.h"
-#include "include/wrappers.h"
 
 void kernel_main(void)
 {

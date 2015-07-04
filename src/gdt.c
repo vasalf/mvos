@@ -1,6 +1,6 @@
 #include <gdt.h>
-#include <lgdt.h>
 #include <system.h>
+#include <asm/lgdt.h>
 
 struct gdt_descriptor gdtd[5];
 struct gdt_pointer gdtp;

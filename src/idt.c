@@ -1,8 +1,8 @@
 #include <idt.h>
-#include <asm_isr.h>
-#include <asm_irq.h>
-#include <lidt.h>
 #include <system.h>
+#include <asm/isr.h>
+#include <asm/irq.h>
+#include <asm/lidt.h>
 
 struct idt_descriptor idtd[256];
 struct idt_pointer idtp;

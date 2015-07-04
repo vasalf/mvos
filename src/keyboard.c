@@ -1,10 +1,10 @@
-#include "include/keyboard.h"
-#include "include/ports.h"
-#include "include/vga.h"
-#include "include/system.h"
-#include "include/string.h"
-#include "include/irq.h"
-#include "include/timer.h"
+#include <keyboard.h>
+#include <ports.h>
+#include <vga.h>
+#include <system.h>
+#include <string.h>
+#include <irq.h>
+#include <timer.h>
 
 uint16_t keyboard_port;
 

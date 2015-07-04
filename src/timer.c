@@ -1,8 +1,8 @@
-#include "include/timer.h"
-#include "include/irq.h"
-#include "include/ports.h"
-#include "include/vga.h"
-#include "include/system.h"
+#include <timer.h>
+#include <irq.h>
+#include <ports.h>
+#include <vga.h>
+#include <system.h>
 
 
 uint32_t uptime;

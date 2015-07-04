@@ -1,7 +1,6 @@
-#include "include/irq.h"
-#include "include/isr.h"
-#include "include/pic.h"
-#include "include/ports.h"
+#include <irq.h>
+#include <pic.h>
+#include <ports.h>
 
 void irq_common_handler(registers_t regs) {
     isr_common_handler(regs);

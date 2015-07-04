@@ -3,7 +3,7 @@ ISODIR=./iso
 SRCDIR=./src
 
 CC=i686-elf-gcc
-CFLAGS=--std=c99 -O2 -Wall -Wextra -Wshadow -ffreestanding
+CFLAGS=--std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding -Isrc/include
 LFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 AS=i686-elf-as
 ASFLAGS=

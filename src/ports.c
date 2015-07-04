@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include "include/ports.h"
+#include <ports.h>
 
 uint8_t inb(uint16_t port)
 {

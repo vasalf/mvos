@@ -1,10 +1,7 @@
-#include <stdint.h>
-#include <stddef.h>
-#include "include/vga.h"
-#include "include/string.h"
-#include "include/ports.h"
-#include "include/registers.h"
-#include "include/init.h"
+#include <init.h>
+#include <vga.h>
+#include <string.h>
+#include <registers.h>
 
 void kernel_main(void)
 {

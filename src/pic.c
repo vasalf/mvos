@@ -1,5 +1,5 @@
-#include "include/pic.h"
-#include "include/ports.h"
+#include <pic.h>
+#include <ports.h>
 
 void init_pic(void) {
     pic_remap(0x20, 0x28);

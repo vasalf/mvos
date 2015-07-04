@@ -1,6 +1,5 @@
-#include "include/system.h"
-#include "include/vga.h"
-#include <stdint.h>
+#include <system.h>
+#include <vga.h>
 
 
 void panic(char *msg)

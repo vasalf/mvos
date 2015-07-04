@@ -1,8 +1,8 @@
-#include "include/isr.h"
-#include "include/ports.h"
-#include "include/pic.h"
-#include "include/vga.h"
-#include "include/string.h"
+#include <isr.h>
+#include <ports.h>
+#include <pic.h>
+#include <vga.h>
+#include <string.h>
 
 void isr_common_handler(struct registers regs) {
     if (isr_handlers[regs.int_no] != 0) {

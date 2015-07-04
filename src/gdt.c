@@ -1,7 +1,6 @@
-#include "include/gdt.h"
-#include "include/lgdt.h"
-#include "include/ports.h"
-#include "include/system.h"
+#include <gdt.h>
+#include <lgdt.h>
+#include <system.h>
 
 struct gdt_descriptor gdtd[5];
 struct gdt_pointer gdtp;

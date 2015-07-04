@@ -1,6 +1,6 @@
-#include "include/vga.h"
-#include "include/string.h"
-#include "include/ports.h"
+#include <vga.h>
+#include <string.h>
+#include <ports.h>
 
 const size_t VGA_WIDTH = 80;
 const size_t VGA_HEIGHT = 25;

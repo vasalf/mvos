@@ -1,10 +1,10 @@
-#include "include/init.h"
-#include "include/vga.h"
-#include "include/gdt.h"
-#include "include/pic.h"
-#include "include/idt.h"
-#include "include/timer.h"
-#include "include/keyboard.h"
+#include <init.h>
+#include <vga.h>
+#include <gdt.h>
+#include <pic.h>
+#include <idt.h>
+#include <timer.h>
+#include <keyboard.h>
 
 void init_all()
 {

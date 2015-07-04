@@ -8,7 +8,7 @@ LFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 AS=i686-elf-as
 ASFLAGS=
 
-OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/string.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o $(OBJDIR)/registers.o $(OBJDIR)/init.o $(OBJDIR)/lidt.o $(OBJDIR)/lgdt.o $(OBJDIR)/idt.o $(OBJDIR)/gdt.o $(OBJDIR)/pic.o $(OBJDIR)/asm_isr.o $(OBJDIR)/isr.o $(OBJDIR)/asm_irq.o $(OBJDIR)/irq.o $(OBJDIR)/timer.o
+OBJS=$(OBJDIR)/kernel.o $(OBJDIR)/string.o $(OBJDIR)/vga.o $(OBJDIR)/boot.o $(OBJDIR)/ports.o $(OBJDIR)/system.o $(OBJDIR)/keyboard.o $(OBJDIR)/asm_keyboard.o $(OBJDIR)/registers.o $(OBJDIR)/init.o $(OBJDIR)/lidt.o $(OBJDIR)/lgdt.o $(OBJDIR)/idt.o $(OBJDIR)/gdt.o $(OBJDIR)/pic.o $(OBJDIR)/asm_isr.o $(OBJDIR)/isr.o $(OBJDIR)/asm_irq.o $(OBJDIR)/irq.o $(OBJDIR)/timer.o $(OBJDIR)/asm_timer.o
 
 all: iso
 
@@ -47,6 +47,9 @@ $(OBJDIR)/boot.o: $(SRCDIR)/boot.s
 $(OBJDIR)/keyboard.o: $(SRCDIR)/keyboard.c $(SRCDIR)/include/keyboard.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/keyboard.c -o $(OBJDIR)/keyboard.o
 
+$(OBJDIR)/asm_keyboard.o: $(SRCDIR)/asm_keyboard.s $(SRCDIR)/include/asm_keyboard.h
+	$(AS) $(ASFLAGS) $(SRCDIR)/asm_keyboard.s -o $(OBJDIR)/asm_keyboard.o
+
 $(OBJDIR)/registers.o: $(SRCDIR)/registers.s $(SRCDIR)/include/registers.h
 	$(AS) $(ASFLAGS) $(SRCDIR)/registers.s -o $(OBJDIR)/registers.o
 
@@ -74,14 +77,17 @@ $(OBJDIR)/isr.o: $(SRCDIR)/isr.c $(SRCDIR)/include/isr.h
 $(OBJDIR)/asm_isr.o: $(SRCDIR)/asm_isr.s $(SRCDIR)/include/asm_isr.h
 	$(AS) $(ASFLAGS) $(SRCDIR)/asm_isr.s -o $(OBJDIR)/asm_isr.o
 
-$(OBJDIR)/asm_irq.o: $(SRCDIR)/asm_irq.s $(SRCDIR)/include/asm_irq.h
-	$(AS) $(ASFLAGS) $(SRCDIR)/asm_irq.s -o $(OBJDIR)/asm_irq.o
-
 $(OBJDIR)/irq.o: $(SRCDIR)/irq.c $(SRCDIR)/include/irq.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/irq.c -o $(OBJDIR)/irq.o
 
+$(OBJDIR)/asm_irq.o: $(SRCDIR)/asm_irq.s $(SRCDIR)/include/asm_irq.h
+	$(AS) $(ASFLAGS) $(SRCDIR)/asm_irq.s -o $(OBJDIR)/asm_irq.o
+
 $(OBJDIR)/timer.o: $(SRCDIR)/timer.c $(SRCDIR)/include/timer.h
 	$(CC) $(CFLAGS) -c $(SRCDIR)/timer.c -o $(OBJDIR)/timer.o
+
+$(OBJDIR)/asm_timer.o: $(SRCDIR)/asm_timer.s $(SRCDIR)/include/asm_timer.h
+	$(AS) $(ASFLAGS) $(SRCDIR)/asm_timer.s -o $(OBJDIR)/asm_timer.o
 
 clean_compilation:
 	rm -rf $(ISODIR)

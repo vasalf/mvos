@@ -1,17 +1,8 @@
-.globl  _asm_isr_default_noerror
-.type   _asm_isr_default_noerror,  @function
-_asm_isr_default_noerror:
+.globl  _asm_timer_irq
+.type   _asm_timer_irq,  @function
+_asm_timer_irq:
         cli
         push    $0
-        jmp     .isr_common_stub
-
-.globl  _asm_isr_default
-.type   _asm_isr_default,  @function
-_asm_isr_default:
-        cli
-        jmp     .isr_common_stub
-
-.isr_common_stub:
         pusha
         
         mov     %ds,        %ax
@@ -24,13 +15,16 @@ _asm_isr_default:
         mov     %ax,        %gs
 
         cld
-        call    isr_default_handler
+        call    timer_irq
 
         pop     %eax
         mov     %ax,        %ds
         mov     %ax,        %es
         mov     %ax,        %fs
         mov     %ax,        %gs
+
+        mov     $0x20,      %al
+        outb    %al,        $0x20
 
         popa
         add     $4,         %esp

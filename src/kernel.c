@@ -20,8 +20,8 @@ void kernel_main(void)
     itoa(cr0reg, buf, 2);
     vga_puts(buf);
     vga_puts("\n");
-    __asm__ __volatile__ ("sti");
     vga_puts("Interrupts enabled\n");
+    __asm__ __volatile__ ("sti");
     for (;;) {
         __asm__ __volatile__ ("hlt\n");
     }

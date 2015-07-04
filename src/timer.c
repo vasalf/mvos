@@ -1,5 +1,5 @@
 #include <timer.h>
-#include <irq.h>
+#include <asm_timer.h>
 #include <ports.h>
 #include <vga.h>
 #include <system.h>
@@ -8,14 +8,14 @@
 uint32_t uptime;
 
 void timer_irq(registers_t regs) {
-    if (regs.int_no != 0x20) {
-        panic("This is just weird\n");
+    if (regs.err) {
+        panic("Timer interrupt error\n");
     }
     ++uptime;
 }
 
 void init_timer(void) {
-    irq_register_handler(0, timer_irq);
+    isr_register_handler(0x20, _asm_timer_irq);
     uint32_t divisor = 1193180 / TIMER_FREQ;
     outb(0x43, 0x36);
     io_wait();

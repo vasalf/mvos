@@ -1,2 +1,4 @@
 mvos.iso
-.tmp
+obj
+iso
+kernel.bin

@@ -3,7 +3,7 @@
 
 
 #include <stdint.h>
-#include <asm_isr.h>
+#include <asm/isr.h>
 
 #define IRQ0    0x20
 #define IRQ1    0x21

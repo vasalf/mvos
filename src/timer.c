@@ -1,8 +1,8 @@
 #include <timer.h>
-#include <asm_timer.h>
 #include <ports.h>
 #include <vga.h>
 #include <system.h>
+#include <asm/timer.h>
 
 
 uint32_t uptime;

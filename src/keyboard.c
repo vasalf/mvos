@@ -1,10 +1,10 @@
 #include <keyboard.h>
-#include <asm_keyboard.h>
 #include <ports.h>
 #include <vga.h>
 #include <system.h>
 #include <string.h>
 #include <timer.h>
+#include <asm/keyboard.h>
 
 uint16_t keyboard_port;
 

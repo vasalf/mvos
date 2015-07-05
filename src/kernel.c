@@ -1,7 +1,7 @@
 #include <init.h>
 #include <vga.h>
 #include <string.h>
-#include <registers.h>
+#include <asm/registers.h>
 
 void kernel_main(void)
 {

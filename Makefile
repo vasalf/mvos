@@ -1,21 +1,20 @@
 SRCDIR=src
 OBJDIR=obj
 ISODIR=iso
-SUBDIRS=$(SRCDIR) $(addprefix $(SRCDIR), /asm)
+SUBDIRS=$(shell find $(SRCDIR) -type d | grep -v include)
+INCLUDEDIRS=$(shell find $(SRCDIR) -type d -name include)
 OBJSUBDIRS=$(subst $(SRCDIR),$(OBJDIR),$(SUBDIRS))
 
 CC=i686-elf-gcc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding -I$(realpath $(SRCDIR))/include
+CFLAGS=-std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc)))
 AS=i686-elf-as
 ASFLAGS=
 LD=$(CC)
 LDFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 
-C_SRCS=$(foreach subd,$(SUBDIRS),$(wildcard $(subd)/*.c))
-C_OBJS=$(subst $(SRCDIR),$(OBJDIR),$(subst .c,.o,$(C_SRCS)))
-AS_SRCS=$(foreach subd,$(SUBDIRS),$(wildcard $(subd)/*.s))
-AS_OBJS=$(subst $(SRCDIR),$(OBJDIR),$(subst .s,.o,$(AS_SRCS)))
-OBJS=$(C_OBJS) $(AS_OBJS)
+SUFFIXES=.c .s
+SRCS=$(foreach subd,$(SUBDIRS),$(foreach suf,$(SUFFIXES),$(wildcard $(subd)/*$(suf))))
+OBJS=$(foreach subd,$(SUBDIRS),$(foreach suf,$(SUFFIXES),$(subst $(SRCDIR),$(OBJDIR),$(subst $(suf),.o,$(wildcard $(subd)/*$(suf))))))
 
 
 all: mvos.iso

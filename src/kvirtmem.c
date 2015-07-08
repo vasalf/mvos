@@ -6,7 +6,7 @@
 
 // The amount of memory needed in bytes is calculated by:
 // sizeof(void*) * KERNEL_RESERVED_ALLOCLIMIT 
-// + sizeof(int) * (4 * KERNEL_RESERVED_ALLOCLIMIT)
+// + sizeof(int) * (3 * KERNEL_RESERVED_ALLOCLIMIT)
 // + sizeof(size_t) * KERNEL_RESERVEC_ALLOCLIMIT.
 // Kernel stack, code and all of its (and those) static arrays should be above
 // KERNEL_RESERVED_BEGIN.
@@ -16,6 +16,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <system.h>
+#include <vga.h>
+#include <string.h>
 
 const int KERNEL_RESERVED_BEGIN = 0x200000; // 2MiB
 const int KERNEL_RESERVED_END = 0x400000; // 4MiB
@@ -62,44 +64,12 @@ size_t static_stack_size(struct static_stack* st)
     return st->stop + 1;
 }
 
-struct index_queue
-{
-    struct static_stack in;
-    struct static_stack out;
-};
-
-struct index_queue default_index_queue()
-{
-    struct index_queue q;
-    q.in = default_static_stack();
-    q.out = default_static_stack();
-    return q;
-}
-
-void index_queue_rotate(struct index_queue* q)
-{
-    while (!static_stack_size(&(q->in)))
-        static_stack_push(&(q->out), static_stack_pop(&(q->in)));
-}
-
-void index_queue_push(struct index_queue* q, int a)
-{
-    static_stack_push(&(q->in), a);
-}
-
-int index_queue_pop(struct index_queue* q)
-{
-    if (!static_stack_size(&(q->out)))
-        index_queue_rotate(q);
-    return static_stack_pop(&(q->out));
-}
-
 void* ptr_to_the_beginning[KERNEL_RESERVED_ALLOCLIMIT + 2];
 int next_allocated[KERNEL_RESERVED_ALLOCLIMIT + 2];
 int prev_allocated[KERNEL_RESERVED_ALLOCLIMIT + 2];
 size_t allocated_size[KERNEL_RESERVED_ALLOCLIMIT + 2];
 int num_allocated;
-struct index_queue q;
+struct static_stack free_indices;
 
 void clear_mem(void* begin, void* end)
 {
@@ -127,10 +97,11 @@ void init_kvirtmem()
     prev_allocated[0] = -1;
     next_allocated[1] = -1;
     prev_allocated[1] = 0;
+    allocated_size[0] = 1;
     ptr_to_the_beginning[1] = (void*)KERNEL_RESERVED_END;
-    q = default_index_queue();
+    free_indices = default_static_stack();
     for (int i = 2; i < KERNEL_RESERVED_ALLOCLIMIT + 2; i++)
-        index_queue_push(&q, i);
+        static_stack_push(&free_indices, i);
 }
 
 inline size_t distance(void* a, void* b)
@@ -141,20 +112,26 @@ inline size_t distance(void* a, void* b)
 void* kmalloc(size_t size)
 {
     if (num_allocated == KERNEL_RESERVED_ALLOCLIMIT)
+    {
+        vga_puts("kmalloc: Too many segments allocated\n");
         return NULL;
+    }
     int cur = 0;
     bool found = false;
     while (!found && cur != 1)
     {
         if (distance(ptr_to_the_beginning[cur] + allocated_size[cur], 
-                     ptr_to_the_beginning[next_allocated[cur]]) <= size)
+                     ptr_to_the_beginning[next_allocated[cur]]) >= size)
             found = true;
         else
             cur = next_allocated[cur];
     }
     if (!found)
+    {
+        vga_puts("kmalloc: Segment of exact length was not found\n");
         return NULL;
-    int i = index_queue_pop(&q);
+    }
+    int i = static_stack_pop(&free_indices);
     ptr_to_the_beginning[i] = ptr_to_the_beginning[cur] + allocated_size[cur];
     allocated_size[i] = size;
     next_allocated[i] = next_allocated[cur];
@@ -183,10 +160,10 @@ void kfree(void* ptr)
     next_allocated[prev_allocated[t]] = next_allocated[t];
     ptr_to_the_beginning[t] = NULL;
     num_allocated--;
-    index_queue_push(&q, t);
+    static_stack_push(&free_indices, t);
 }
 
-void* krealloc(void* ptr, size_t size)
+void* stupid_krealloc(void* ptr, size_t size)
 {
     int t = find_ptr(ptr);
     if (t == -1)
@@ -195,6 +172,14 @@ void* krealloc(void* ptr, size_t size)
         return NULL;
     allocated_size[t] = size;
     return ptr;
+}
+
+void* krealloc(void* ptr, size_t size)
+{
+    if (stupid_krealloc(ptr, size))
+        return ptr;
+    kfree(ptr);
+    return kmalloc(size);
 }
 
 void* kcalloc(size_t num, size_t size)

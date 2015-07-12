@@ -40,7 +40,7 @@ static const char *printf_flags(const char *format, int *flags) {
 }
 
 static const char *printf_width(const char *format, int *width) {
-    *width = -1;
+    *width = 0;
     if (*format == '*') {
         *width = -2;
         return format + 1;
@@ -180,6 +180,9 @@ static int printf_ubuflen(uintmax_t n, int radix) {
 }
 
 static char *printf_itoa(char *buf, intmax_t n, int radix, char cap_base) {
+    if (n < 0) {
+        n = -n;
+    }
     if (n >= radix) {
         buf = printf_itoa(buf, n / radix, radix, cap_base);
     }
@@ -252,19 +255,19 @@ int vprintf(const char *format, va_list vl) {
             case TYPE_X:
                 switch (size) {
                 case SIZE_hh:
-                    sarg = (intmax_t) ((signed char) va_arg(vl, int));
+                    sarg = (intmax_t) ((unsigned char) va_arg(vl, int));
                     break;
                 case SIZE_h:
-                    sarg = (intmax_t) ((signed short int) va_arg(vl, int));
+                    sarg = (intmax_t) ((short int) va_arg(vl, int));
                     break;
                 case SIZE_:
-                    sarg = (intmax_t) va_arg(vl, signed int);
+                    sarg = (intmax_t) va_arg(vl, int);
                     break;
                 case SIZE_l:
-                    sarg = (intmax_t) va_arg(vl, signed long int);
+                    sarg = (intmax_t) va_arg(vl, long int);
                     break;
                 case SIZE_ll:
-                    sarg = (intmax_t) va_arg(vl, signed long long int);
+                    sarg = (intmax_t) va_arg(vl, long long int);
                     break;
                 case SIZE_j:
                     sarg = (intmax_t) va_arg(vl, intmax_t);
@@ -360,13 +363,22 @@ int vprintf(const char *format, va_list vl) {
                 if (flags & FLAG_ALT) {
                     ++buflen;
                 }
+                if (sarg < 0) {
+                    ++buflen;
+                }
             } else if (type & (TYPE_x | TYPE_X)) {
                 buflen = printf_ibuflen(sarg, 16);
                 if (flags & FLAG_ALT) {
                     buflen += 2;
                 }
+                if (sarg < 0) {
+                    ++buflen;
+                }
             } else {
                 buflen = printf_ibuflen(sarg, 10);
+                if (sarg < 0) {
+                    ++buflen;
+                }
             }
             /*if (width > buflen) { 
                 buf = kmalloc((width + 1) * sizeof(char));

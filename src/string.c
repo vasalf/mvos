@@ -8,6 +8,14 @@ size_t strlen(const char *str)
     return ret;
 }
 
+void *memcpy(void *dst, void *src, size_t n) {
+    void *odst = dst;
+    while (n--) {
+        *((char *) dst++) = *((char *) src++);
+    }
+    return odst;
+}
+
 #define TEMPLATE_UITOA_DEF(NAME, ITYPE) \
 char *NAME(ITYPE num, char *buf, unsigned int radix) \
 { \

@@ -10,7 +10,7 @@
 void init_all()
 {
     init_vga();
-    init_kvirtmem();
+    //init_kvirtmem();
     init_gdt();
     init_pic();
     init_idt();

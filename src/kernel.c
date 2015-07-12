@@ -1,16 +1,27 @@
 #include <init.h>
-#include <stdio.h>
+#include <vga.h>
 #include <string.h>
 #include <asm/registers.h>
 
 void kernel_main(void)
 {
     init_all();
-    printf("Kernel loaded\n");
-    printf("EIP: %#X\n", get_eip());
-    printf("CR0: %#X\n", get_cr0());
+    vga_puts("Kernel loaded\n");
+    int eipreg;
+    get_eip(eipreg);
+    vga_puts("EIP: 0x");
+    char buf[10];
+    itoa(eipreg, buf, 16);
+    vga_puts(buf);
+    vga_puts("\n");
+    int cr0reg;
+    get_cr0(cr0reg);
+    vga_puts("CR0: 0b");
+    itoa(cr0reg, buf, 2);
+    vga_puts(buf);
+    vga_puts("\n");
+    vga_puts("Interrupts enabled\n");
     __asm__ __volatile__ ("sti");
-    printf("Interrupts enabled\n");
     for (;;) {
         __asm__ __volatile__ ("hlt\n");
     }

@@ -1,6 +1,6 @@
 #include <keyboard.h>
 #include <ports.h>
-#include <stdio.h>
+#include <vga.h>
 #include <system.h>
 #include <string.h>
 #include <timer.h>
@@ -9,13 +9,19 @@
 uint16_t keyboard_port;
 
 void keyboard_irq(registers_t regs) {
+    char buf[10];
     if (regs.err) {
-        panic("Keyboard interrupt error (%#hhX)\n", regs.err);
+        panic("Keyboard interrupt error\n");
     }
-    printf("keyboard_irq called.\n");
+    vga_puts("keyboard_irq called.\n");
     uint8_t signal = inb(keyboard_port);
-    printf("Keyboard sent %#2hhX\n", signal);
-    printf("Uptime: %ds\n", uptime / TIMER_FREQ);
+    vga_puts("Keyboard sent 0x");
+    uitoa(signal, buf, 16);
+    vga_puts(buf);
+    vga_puts("\nUptime: ");
+    uitoa(uptime / TIMER_FREQ, buf, 10);
+    vga_puts(buf);
+    vga_puts("s\n");
 }
 
 void init_keyboard(void) {

@@ -20,7 +20,7 @@ void init_idt(void)
     idtp.size = sizeof(struct idt_descriptor) * 256 - 1;
     idtp.base = (uint32_t) &idtd;
     if (sizeof(struct idt_descriptor) != 8) {
-        panic("sizeof(struct idt_descriptor) must be 8, not %d\n", sizeof(struct idt_descriptor));
+        panic("sizeof(struct idt_descriptor) must be 8\n");
     }
     for (int i = 0; i < 0x20; ++i) {
         idt_set_descriptor(i, (uint32_t) _asm_isr_default_noerror, 0x08, 0x8E);

@@ -1,14 +1,14 @@
 #include <isr.h>
 #include <idt.h>
 #include <pic.h>
-#include <stdio.h>
+#include <vga.h>
 #include <system.h>
 
 void isr_default_handler(struct registers regs) {
     if (regs.err) {
-        panic("Interrupt error (%#hhX)\n", regs.err);
+        panic("Interrupt error\n");
     }
-    printf("Unhandled interrupt!\n");
+    vga_puts("Unhandled interrupt!\n");
 }
 
 void isr_register_handler(int num, isr_t handler) {

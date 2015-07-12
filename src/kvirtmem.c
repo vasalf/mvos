@@ -16,7 +16,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <system.h>
-#include <vga.h>
+#include <stdio.h>
 #include <string.h>
 
 const int KERNEL_RESERVED_BEGIN = 0x200000; // 2MiB
@@ -113,7 +113,7 @@ void* kmalloc(size_t size)
 {
     if (num_allocated == KERNEL_RESERVED_ALLOCLIMIT)
     {
-        vga_puts("kmalloc: Too many segments allocated\n");
+        printf("kmalloc: Too many segments allocated\n");
         return NULL;
     }
     int cur = 0;
@@ -128,7 +128,7 @@ void* kmalloc(size_t size)
     }
     if (!found)
     {
-        vga_puts("kmalloc: Segment of exact length was not found\n");
+        printf("kmalloc: Segment of exact length was not found\n");
         return NULL;
     }
     int i = static_stack_pop(&free_indices);

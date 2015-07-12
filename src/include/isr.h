@@ -22,15 +22,17 @@
 #define IRQ14   0x2E
 #define IRQ15   0x2F
 
+/*
 typedef struct registers {
     uint32_t ds;
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
     uint32_t err;
     uint32_t eip, cs, eflags, user_esp, ss;
 } registers_t;
-typedef void (*isr_t)(registers_t);
+*/
+typedef void (*isr_t)(void);
 
-void isr_common_handler(registers_t regs);
+void isr_common_handler(void);
 void isr_register_handler(int num, isr_t handler);
 void isr_deregister_handler(int num);
 

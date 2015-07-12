@@ -15,7 +15,7 @@ void init_gdt(void)
     gdt_set_descriptor(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
     gdt_set_descriptor(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
     if (sizeof(struct gdt_descriptor) != 8) {
-        panic("sizeof(struct gdt_descriptor) must be 8\n");
+        panic("sizeof(struct gdt_descriptor) must be 8, not %d\n", sizeof(struct gdt_descriptor));
     }
     _asm_lgdt();
 }

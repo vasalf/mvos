@@ -4,7 +4,7 @@
 
 #include <isr.h>
 
-void irq_default_master_handler(registers_t regs);
-void irq_default_slave_handler(registers_t regs);
+void irq_default_master_handler(void);
+void irq_default_slave_handler(void);
 
 #endif

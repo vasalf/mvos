@@ -1,16 +1,12 @@
 #include <timer.h>
 #include <ports.h>
-#include <vga.h>
 #include <system.h>
 #include <asm/timer.h>
 
 
 uint32_t uptime;
 
-void timer_irq(registers_t regs) {
-    if (regs.err) {
-        panic("Timer interrupt error\n");
-    }
+void timer_irq(void) {
     ++uptime;
 }
 

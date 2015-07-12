@@ -103,15 +103,16 @@ static const char *printf_size(const char *format, int *size) {
 #define TYPE_u      (1 << 2)
 #define TYPE_x      (1 << 3)
 #define TYPE_X      (1 << 4)
-#define TYPE_p      (1 << 5)
-#define TYPE_n      (1 << 6)
+#define TYPE_b      (1 << 5)
+#define TYPE_p      (1 << 6)
+#define TYPE_n      (1 << 7)
 
-#define TYPE_s      (1 << 7)
-#define TYPE_c      (1 << 8)
-#define TYPE_PERC   (1 << 9)
+#define TYPE_s      (1 << 8)
+#define TYPE_c      (1 << 9)
+#define TYPE_PERC   (1 << 10)
 
-#define TYPE_SIGNED (TYPE_d | TYPE_o | TYPE_x | TYPE_X | TYPE_n)
-#define TYPE_UNSIGNED (TYPE_u | TYPE_p)
+#define TYPE_SIGNED (TYPE_d | TYPE_n)
+#define TYPE_UNSIGNED (TYPE_u | TYPE_p | TYPE_o | TYPE_x | TYPE_X | TYPE_b)
 
 static const char *printf_type(const char *format, int *type) {
     *type = -1;
@@ -130,6 +131,9 @@ static const char *printf_type(const char *format, int *type) {
         break;
     case 'X':
         *type = TYPE_X;
+        break;
+    case 'b':
+        *type = TYPE_b;
         break;
     case 'c':
         *type = TYPE_c;
@@ -180,6 +184,9 @@ static int printf_ubuflen(uintmax_t n, int radix) {
 }
 
 static char *printf_itoa(char *buf, intmax_t n, int radix, char cap_base) {
+    if (n < 0) {
+        n = -n;
+    }
     if (n >= radix) {
         buf = printf_itoa(buf, n / radix, radix, cap_base);
     }
@@ -227,7 +234,7 @@ int vprintf(const char *format, va_list vl) {
     char *string_arg = 0;
 
     const char *i = 0;
-    char buf[100];
+    char *buf = NULL;
     char *bufpos = 0, *j = 0;
     int ret = 0, flags = 0, width = 0, size = 0, type = 0, buflen = 0;
 
@@ -247,12 +254,9 @@ int vprintf(const char *format, va_list vl) {
             }
             switch (type) {
             case TYPE_d:
-            case TYPE_o:
-            case TYPE_x:
-            case TYPE_X:
                 switch (size) {
                 case SIZE_hh:
-                    sarg = (intmax_t) ((signed char) va_arg(vl, int));
+                    sarg = (intmax_t) ((unsigned char) va_arg(vl, int));
                     break;
                 case SIZE_h:
                     sarg = (intmax_t) ((signed short int) va_arg(vl, int));
@@ -277,6 +281,10 @@ int vprintf(const char *format, va_list vl) {
                     break;
                 }
                 break;
+            case TYPE_o:
+            case TYPE_x:
+            case TYPE_X:
+            case TYPE_b:
             case TYPE_u:
                 switch (size) {
                 case SIZE_hh:
@@ -315,7 +323,7 @@ int vprintf(const char *format, va_list vl) {
             case TYPE_n:
                 switch (size) {
                 case SIZE_hh:
-                    sarg = (intmax_t) *va_arg(vl, char *);
+                    sarg = (intmax_t) *va_arg(vl, unsigned char *);
                     break;
                 case SIZE_h:
                     sarg = (intmax_t) *va_arg(vl, short int *);
@@ -356,23 +364,31 @@ int vprintf(const char *format, va_list vl) {
             } else if (type == TYPE_p) {
                 buflen = printf_ubuflen(uarg, 16) + 2;
             } else if (type == TYPE_o) {
-                buflen = printf_ibuflen(sarg, 8);
+                buflen = printf_ubuflen(uarg, 8);
                 if (flags & FLAG_ALT) {
                     ++buflen;
                 }
             } else if (type & (TYPE_x | TYPE_X)) {
-                buflen = printf_ibuflen(sarg, 16);
+                buflen = printf_ubuflen(uarg, 16);
+                if (flags & FLAG_ALT) {
+                    buflen += 2;
+                }
+            } else if (type == TYPE_b) {
+                buflen = printf_ubuflen(uarg, 2);
                 if (flags & FLAG_ALT) {
                     buflen += 2;
                 }
             } else {
                 buflen = printf_ibuflen(sarg, 10);
+                if (sarg < 0) {
+                    ++buflen;
+                }
             }
-            /*if (width > buflen) { 
+            if (width > buflen) { 
                 buf = kmalloc((width + 1) * sizeof(char));
             } else {
                 buf = kmalloc((buflen + 1) * sizeof(char));
-            }*/
+            }
             bufpos = buf;
             if (buflen < width) {
                 bufpos += width - buflen;
@@ -404,6 +420,10 @@ int vprintf(const char *format, va_list vl) {
                     bufpos[0] = '0';
                     bufpos[1] = 'x';
                     bufpos += 2;
+                } else if (type == TYPE_b) {
+                    bufpos[0] = '0';
+                    bufpos[1] = 'b';
+                    bufpos += 2;
                 }
             }
             if (type == TYPE_s) {
@@ -419,17 +439,19 @@ int vprintf(const char *format, va_list vl) {
             } else if (type == TYPE_p) {
                 printf_utoa(bufpos, uarg, 16, 'A');
             } else if (type == TYPE_o) {
-                printf_itoa(bufpos, sarg, 8, 'a');
+                printf_utoa(bufpos, uarg, 8, 'a');
             } else if (type == TYPE_x) {
-                printf_itoa(bufpos, sarg, 16, 'a');
+                printf_utoa(bufpos, uarg, 16, 'a');
             } else if (type == TYPE_X) {
-                printf_itoa(bufpos, sarg, 16, 'A');
+                printf_utoa(bufpos, uarg, 16, 'A');
+            } else if (type == TYPE_b) {
+                printf_utoa(bufpos, uarg, 2, 'a');
             } else {
                 printf_itoa(bufpos, sarg, 10, 'a');
             }
             ret += printf_strlen(buf);
             vga_puts(buf);
-            //kfree(buf);
+            kfree(buf);
         }
     }
 

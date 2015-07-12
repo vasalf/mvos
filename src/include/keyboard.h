@@ -8,6 +8,6 @@
 extern uint16_t keyboard_port;
 
 void init_keyboard(void);
-void keyboard_irq(registers_t regs);
+void keyboard_irq(void);
 
 #endif

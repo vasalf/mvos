@@ -4,6 +4,6 @@
 
 #include <isr.h>
 
-void _asm_keyboard_irq(registers_t regs);
+void _asm_keyboard_irq();
 
 #endif

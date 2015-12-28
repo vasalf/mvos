@@ -8,15 +8,19 @@ void _panic(char *msg, char *file, int line, ...)
     va_list vl;
     __asm__ __volatile__ ("cli");
     printf("%s:%d: ", file, line);
-    if (msg) {
+    if (msg) 
+    {
         printf("KERNEL PANIC: ");
         va_start(vl, line);
         printf(msg, vl);
         va_end(vl);
-    } else {
+    }
+    else 
+    {
         printf("KERNEL PANIC");
     }
-    for (;;) {
+    for (;;) 
+    {
         __asm__ __volatile__ ("hlt");
     }
 }

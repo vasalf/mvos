@@ -8,7 +8,8 @@
 
 uint16_t keyboard_port;
 
-void keyboard_irq(void) {
+void keyboard_irq(void)
+{
     uint8_t signal;
     signal = inb(keyboard_port);
     printf("keyboard_irq called.\n");
@@ -16,7 +17,15 @@ void keyboard_irq(void) {
     printf("Uptime: %ds\n", uptime / TIMER_FREQ);
 }
 
-void init_keyboard(void) {
+void check_keyboard(void)
+{
+    if (iob(keyboard_port, 0xee) == 0xfe)
+        panic("Keyboard not found at port %#hhX", keyboard_port);
+}
+
+void init_keyboard(void)
+{
     keyboard_port = 0x60;
+    check_keyboard();
     isr_register_handler(0x21, _asm_keyboard_irq);
 }

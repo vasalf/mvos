@@ -74,6 +74,7 @@ struct static_stack free_indices;
 void clear_mem(void* begin, void* end)
 {
     while (begin < end)
+    
     {
         *((uint8_t*)begin) = 0;
         begin++;
@@ -112,6 +113,7 @@ inline size_t distance(void* a, void* b)
 void* kmalloc(size_t size)
 {
     if (num_allocated == KERNEL_RESERVED_ALLOCLIMIT)
+    
     {
         printf("kmalloc: Too many segments allocated\n");
         return NULL;
@@ -119,6 +121,7 @@ void* kmalloc(size_t size)
     int cur = 0;
     bool found = false;
     while (!found && cur != 1)
+    
     {
         if (distance(ptr_to_the_beginning[cur] + allocated_size[cur], 
                      ptr_to_the_beginning[next_allocated[cur]]) >= size)
@@ -127,6 +130,7 @@ void* kmalloc(size_t size)
             cur = next_allocated[cur];
     }
     if (!found)
+    
     {
         printf("kmalloc: Segment of exact length was not found\n");
         return NULL;

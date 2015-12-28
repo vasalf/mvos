@@ -6,11 +6,13 @@
 
 uint32_t uptime;
 
-void timer_irq(void) {
+void timer_irq(void) 
+{
     ++uptime;
 }
 
-void init_timer(void) {
+void init_timer(void) 
+{
     isr_register_handler(0x20, _asm_timer_irq);
     uint32_t divisor = 1193180 / TIMER_FREQ;
     outb(0x43, 0x36);

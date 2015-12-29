@@ -6,7 +6,7 @@ INCLUDEDIRS=$(shell find $(SRCDIR) -type d -name include)
 OBJSUBDIRS=$(subst $(SRCDIR),$(OBJDIR),$(SUBDIRS))
 
 CC=i686-elf-gcc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc)))
+CFLAGS=-std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc))) -DKBDDBG
 AS=i686-elf-as
 ASFLAGS=
 LD=$(CC)

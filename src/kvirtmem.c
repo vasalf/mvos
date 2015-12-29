@@ -194,7 +194,7 @@ void* kcalloc(size_t num, size_t size)
     return ptr;
 }
 
-// Here comes some useful debug stub
+// Here comes some useful debug stuff
 
 bool is_allocated(void* ptr)
 {

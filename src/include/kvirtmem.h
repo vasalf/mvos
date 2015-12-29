@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-// Here comes headers for some useful debug stub
+// Here comes headers for some useful debug stuff
 #include <stdbool.h>
 
 void init_kvirtmem();
@@ -16,7 +16,7 @@ void kfree(void* ptr);
 void* krealloc(void* ptr, size_t size);
 void* kmalloc(size_t size);
 
-// Here comes some useful debug stub 
+// Here comes some useful debug stuff 
 bool is_allocated(void* ptr);
 
 #endif //KVIRTMEM_H

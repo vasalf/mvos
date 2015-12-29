@@ -112,8 +112,8 @@ inline size_t distance(void* a, void* b)
 
 void* kmalloc(size_t size)
 {
+    assert(size > 0);
     if (num_allocated == KERNEL_RESERVED_ALLOCLIMIT)
-    
     {
         printf("kmalloc: Too many segments allocated\n");
         return NULL;
@@ -121,7 +121,6 @@ void* kmalloc(size_t size)
     int cur = 0;
     bool found = false;
     while (!found && cur != 1)
-    
     {
         if (distance(ptr_to_the_beginning[cur] + allocated_size[cur], 
                      ptr_to_the_beginning[next_allocated[cur]]) >= size)
@@ -130,12 +129,12 @@ void* kmalloc(size_t size)
             cur = next_allocated[cur];
     }
     if (!found)
-    
     {
         printf("kmalloc: Segment of exact length was not found\n");
         return NULL;
     }
     int i = static_stack_pop(&free_indices);
+    assert(!is_allocated(ptr_to_the_beginning[cur] + allocated_size[cur]));
     ptr_to_the_beginning[i] = ptr_to_the_beginning[cur] + allocated_size[cur];
     allocated_size[i] = size;
     next_allocated[i] = next_allocated[cur];
@@ -193,4 +192,11 @@ void* kcalloc(size_t num, size_t size)
         return NULL;
     clear_array(ptr, size, num);
     return ptr;
+}
+
+// Here comes some useful debug stub
+
+bool is_allocated(void* ptr)
+{
+    return find_ptr(ptr) != -1; 
 }

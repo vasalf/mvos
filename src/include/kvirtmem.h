@@ -3,6 +3,9 @@
 
 #include <stddef.h>
 
+// Here comes headers for some useful debug stub
+#include <stdbool.h>
+
 void init_kvirtmem();
 
 extern const int KERNEL_RESERVED_BEGIN;
@@ -12,5 +15,8 @@ void* kcalloc(size_t num, size_t size);
 void kfree(void* ptr);
 void* krealloc(void* ptr, size_t size);
 void* kmalloc(size_t size);
+
+// Here comes some useful debug stub 
+bool is_allocated(void* ptr);
 
 #endif //KVIRTMEM_H

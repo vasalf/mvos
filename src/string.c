@@ -50,3 +50,11 @@ TEMPLATE_ITOA_DEF(hhtoa, char, uhhtoa)
 TEMPLATE_ITOA_DEF(htoa, short int, uhtoa)
 TEMPLATE_ITOA_DEF(itoa, int, uitoa)
 TEMPLATE_ITOA_DEF(ltoa, long int, ultoa)
+
+void* memcpy(void* dest, const void* src, size_t n)
+{
+    void* end = dest + n;
+    while (dest != end)
+        *(char*)(dest++) = *(char*)(src++);
+    return dest - n;
+}

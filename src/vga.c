@@ -31,8 +31,10 @@ void init_vga(void)
     vga_color = make_color(COLOR_WHITE, COLOR_BLACK);
     vga_buffer = (uint16_t*)0xb8000;
     for (size_t y = 0; y < VGA_HEIGHT; y++)
+    
     {
         for (size_t x = 0; x < VGA_WIDTH; x++)
+        
         {
             const size_t index = y * VGA_WIDTH + x;
             vga_buffer[index] = make_vgachar(' ', vga_color);
@@ -61,15 +63,18 @@ void vga_move_cursor(size_t x, size_t y)
 
 void vga_putchar(char c)
 {
-    if (c == '\r') {
+    if (c == '\r') 
+    {
         vga_column = 0;
         return;
     }
     vga_putcharat(c, vga_color, vga_column, vga_row);
     if (++vga_column == VGA_WIDTH || c == '\n')
+    
     {
         vga_column = 0;
         if (++vga_row == VGA_HEIGHT)
+        
         {
             for (size_t i = 0; i < VGA_HEIGHT - 1; i++)
                 for (size_t j = 0; j < VGA_WIDTH; j++)

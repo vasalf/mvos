@@ -4,16 +4,19 @@
 #include <stdio.h>
 #include <system.h>
 
-void isr_default_handler(void) {
+void isr_default_handler(void) 
+{
     printf("Unhandled interrupt!\n");
 }
 
-void isr_register_handler(int num, isr_t handler) {
+void isr_register_handler(int num, isr_t handler) 
+{
     idt_set_descriptor(num, (uint32_t) handler, 0x08, 0x8E);
     pic_mask(num);
 }
 
-void isr_deregister_handler(int num) {
+void isr_deregister_handler(int num) 
+{
     isr_handlers[num] = 0;
     pic_unmask(num);
 }

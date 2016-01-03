@@ -1,11 +1,13 @@
 #include <pic.h>
 #include <ports.h>
 
-void init_pic(void) {
+void init_pic(void) 
+{
     pic_remap(0x20, 0x28);
 }
 
-void pic_remap(int offset1, int offset2) {
+void pic_remap(int offset1, int offset2) 
+{
     outb(PIC1_COMMAND, ICW1);
     io_wait();
     outb(PIC2_COMMAND, ICW1);
@@ -32,22 +34,30 @@ void pic_remap(int offset1, int offset2) {
     io_wait();
 }
 
-void pic_mask(uint8_t irq) {
+void pic_mask(uint8_t irq) 
+{
     uint16_t port;
-    if (irq < 8) {
+    if (irq < 8) 
+    {
         port = PIC1_DATA;
-    } else {
+    }
+    else 
+    {
         port = PIC2_DATA;
         irq -= 8;
     }
     outb(port, inb(port) | (1 << irq));
 }
 
-void pic_unmask(uint8_t irq) {
+void pic_unmask(uint8_t irq) 
+{
     uint16_t port;
-    if (irq < 8) {
+    if (irq < 8) 
+    {
         port = PIC1_DATA;
-    } else {
+    }
+    else 
+    {
         port = PIC2_DATA;
         irq -= 8;
     }

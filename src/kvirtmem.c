@@ -74,6 +74,7 @@ struct static_stack free_indices;
 void clear_mem(void* begin, void* end)
 {
     while (begin < end)
+    
     {
         *((uint8_t*)begin) = 0;
         begin++;
@@ -97,7 +98,7 @@ void init_kvirtmem()
     prev_allocated[0] = -1;
     next_allocated[1] = -1;
     prev_allocated[1] = 0;
-    allocated_size[0] = 1;
+    allocated_size[0] = 4;
     ptr_to_the_beginning[1] = (void*)KERNEL_RESERVED_END;
     free_indices = default_static_stack();
     for (int i = 2; i < KERNEL_RESERVED_ALLOCLIMIT + 2; i++)
@@ -111,6 +112,9 @@ inline size_t distance(void* a, void* b)
 
 void* kmalloc(size_t size)
 {
+    assert(size > 0);
+    while (size % 4 > 0)
+        size++;
     if (num_allocated == KERNEL_RESERVED_ALLOCLIMIT)
     {
         printf("kmalloc: Too many segments allocated\n");
@@ -132,6 +136,7 @@ void* kmalloc(size_t size)
         return NULL;
     }
     int i = static_stack_pop(&free_indices);
+    assert(!is_allocated(ptr_to_the_beginning[cur] + allocated_size[cur]));
     ptr_to_the_beginning[i] = ptr_to_the_beginning[cur] + allocated_size[cur];
     allocated_size[i] = size;
     next_allocated[i] = next_allocated[cur];
@@ -189,4 +194,11 @@ void* kcalloc(size_t num, size_t size)
         return NULL;
     clear_array(ptr, size, num);
     return ptr;
+}
+
+// Here comes some useful debug stuff
+
+bool is_allocated(void* ptr)
+{
+    return find_ptr(ptr) != -1; 
 }

@@ -16,12 +16,17 @@ uint8_t iob(uint16_t port, uint8_t to_send)
 {
     uint8_t ans;
     outb(port, to_send);
-    while ((ans = inb(port)) == 0xfe)
+    int i = 0;
+    while ((ans = inb(port)) == 0xfe && i < 3)
+    {
         outb(port, to_send);
+        i++;
+    }
     return ans;
 }
 
-void io_wait(void) {
+void io_wait(void) 
+{
     __asm__ __volatile__ (
         "nop\n"
         "nop\n"

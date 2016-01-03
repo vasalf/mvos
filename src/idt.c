@@ -10,6 +10,7 @@ struct idt_pointer idtp;
 void init_idt(void)
 {
     for (int i = 0; i < 256; i++)
+    
     {
         idtd[i].base_low = 0;
         idtd[i].selector = 0;
@@ -19,10 +20,12 @@ void init_idt(void)
     }
     idtp.size = sizeof(struct idt_descriptor) * 256 - 1;
     idtp.base = (uint32_t) &idtd;
-    if (sizeof(struct idt_descriptor) != 8) {
+    if (sizeof(struct idt_descriptor) != 8) 
+    {
         panic("sizeof(struct idt_descriptor) must be 8, not %d\n", sizeof(struct idt_descriptor));
     }
-    for (int i = 0; i < 0x20; ++i) {
+    for (int i = 0; i < 0x20; ++i) 
+    {
         idt_set_descriptor(i, (uint32_t) _asm_isr_default_noerror, 0x08, 0x8E);
     }
     idt_set_descriptor(8, (uint32_t) _asm_isr_default, 0x08, 0x8E);
@@ -31,10 +34,12 @@ void init_idt(void)
     idt_set_descriptor(12, (uint32_t) _asm_isr_default, 0x08, 0x8E);
     idt_set_descriptor(13, (uint32_t) _asm_isr_default, 0x08, 0x8E);
     idt_set_descriptor(14, (uint32_t) _asm_isr_default, 0x08, 0x8E);
-    for (int i = 0x21; i < 0x28; ++i) {
+    for (int i = 0x21; i < 0x28; ++i) 
+    {
         idt_set_descriptor(i, (uint32_t) _asm_irq_default_master, 0x08, 0x8E);
     }
-    for (int i = 0x28; i < 0x30; ++i) {
+    for (int i = 0x28; i < 0x30; ++i) 
+    {
         idt_set_descriptor(i, (uint32_t) _asm_irq_default_slave, 0x08, 0x8E);
     }
 

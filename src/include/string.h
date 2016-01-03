@@ -19,4 +19,6 @@ TEMPLATE_ITOA_DECL(htoa, short int)
 TEMPLATE_ITOA_DECL(itoa, int)
 TEMPLATE_ITOA_DECL(ltoa, long int)
 
+void* memcpy(void* dest, const void* src, size_t n);
+
 #endif

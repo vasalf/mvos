@@ -81,7 +81,14 @@ CHANGED_SOURCES	:=	$(foreach src,$(C_SOURCES),$(if $(shell echo $(C_COMPILE) | d
 CHANGED_NAME 	:= $(if $(shell echo $(LD_COMPILE) | diff - .make/buildopts/$(NAME) 2>&1),$(NAME),)
 CHANGED_OBJECTS	:= $(foreach src,$(CHANGED_SOURCES),$(subst src,obj,$(src).o))
 
-all: $(NAME)
+all: mvos.iso
+
+mvos.iso: $(NAME) src/grub.cfg
+	mkdir -p iso/boot/grub
+	cp kernel.bin iso/boot/kernel.bin
+	cp src/grub.cfg iso/boot/grub/grub.cfg
+	grub2-mkrescue -o $@ iso
+	rm /tmp/grub.*
 
 $(NAME): $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@

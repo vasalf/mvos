@@ -14,7 +14,7 @@
 .long CHECKSUM
 
 .section .bootstrap_stack, "aw", @nobits
-.stack_bottom:
+stack_bottom:
 .skip 16 * 1024
 stack_top:
 

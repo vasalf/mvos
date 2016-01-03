@@ -6,6 +6,7 @@
 #include <timer.h>
 #include <keyboard.h>
 #include <kvirtmem.h>
+#include <threading.h>
 
 void init_all()
 {
@@ -16,4 +17,5 @@ void init_all()
     init_idt();
     init_timer();
     init_keyboard();
+    init_threading();
 }

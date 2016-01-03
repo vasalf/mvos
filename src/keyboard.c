@@ -15,10 +15,14 @@ void keyboard_irq(void)
 {
     uint8_t signal;
     signal = inb(keyboard_port);
+#ifdef VERBOSE_KEYBOARD
     printf("keyboard_irq called.\n");
     printf("Keyboard sent %#4hhX\n", signal);
+#endif
     parse_kbd_signal(signal);
+#ifdef VERBOSE_UPTIME
     printf("Uptime: %ds\n", uptime / TIMER_FREQ);
+#endif
 }
 
 void check_keyboard(void)

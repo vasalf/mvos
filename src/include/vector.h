@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <kvirtmem.h>
+#include <string.h>
 
 #define VECTOR_DEFAULT_CAPACITY 4
 

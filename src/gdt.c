@@ -5,6 +5,37 @@
 struct gdt_descriptor gdtd[5];
 struct gdt_pointer gdtp;
 
+/* Access Byte values
+ *
+ *  Pr - Present bit, should be always 1
+ *  Privl - Privilege, 2 bits. Ring level, from 0 (highest, kernel) to 3 (lowest, user applications)
+ *  Ex - Executable bit
+ *  DC - Direction bit / Conforming bit:
+ *       Direction bit for data (Ex = 0) selectors:
+ *           0 if segment grows up
+ *           1 if segment grows down
+ *       Conforming bit for code selectors:
+ *           if 1 code can be executed from an equal or lower privilege level
+ *           if 0 code can be executed only from equal privilege level
+ *  RW - Readable bit / Writable bit
+ *       Readable bit for code selectors
+ *       Writable bit for data selectors
+ *  Ac - Accessed bit,  should be always 0, used by CPU
+ *
+ * +-------------------+----+-------+---+----+----+----+----+
+ * | Access Byte       | Pr | Privl | 1 | Ex | DC | RW | Ac |
+ * +-------------------+----+-------+---+----+----+----+----+
+ * | 0x9A = 0b10011010 |  1 |   00  | 1 |  1 |  0 |  1 |  0 |
+ * +-------------------+----+-------+---+----+----+----+----+
+ * | 0x92 = 0b10010010 |  1 |   00  | 1 |  0 |  0 |  1 |  0 |
+ * +-------------------+----+-------+---+----+----+----+----+
+ * | 0xFA = 0b11111010 |  1 |   00  | 1 |  0 |  0 |  1 |  0 |
+ * +-------------------+----+-------+---+----+----+----+----+
+ * | 0xF2 = 0b11110010 |  1 |   00  | 1 |  0 |  0 |  1 |  0 |
+ * +-------------------+----+-------+---+----+----+----+----+
+ */
+
+
 void init_gdt(void)
 {
     gdtp.size = sizeof(struct gdt_descriptor) * 5 - 1;

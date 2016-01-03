@@ -4,7 +4,7 @@
 #include <asm/timer.h>
 
 
-uint32_t uptime;
+volatile uint32_t uptime;
 
 void timer_irq(void) 
 {

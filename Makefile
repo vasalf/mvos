@@ -5,10 +5,12 @@ SUBDIRS=$(shell find $(SRCDIR) -type d | grep -v include)
 INCLUDEDIRS=$(shell find $(SRCDIR) -type d -name include)
 OBJSUBDIRS=$(subst $(SRCDIR),$(OBJDIR),$(SUBDIRS))
 
+DEBUGFLAGS=-DDEBUG_THREADING
+
 CC=i686-elf-gcc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc))) -DKBDDBG
+CFLAGS=-std=c99 -O2 -Wall -Wextra -Wshadow -Werror -ffreestanding $(foreach inc,$(INCLUDEDIRS), -I$(realpath $(inc))) $(DEBUGFLAGS)
 AS=i686-elf-as
-ASFLAGS=
+ASFLAGS= -g
 LD=$(CC)
 LDFLAGS=-T $(SRCDIR)/linker.ld -ffreestanding -O2 -nostdlib -lgcc
 
@@ -24,6 +26,7 @@ mvos.iso: kernel.bin $(SRCDIR)/grub.cfg | $(ISODIR)
 	cp kernel.bin $(ISODIR)/boot/kernel.bin
 	cp $(SRCDIR)/grub.cfg $(ISODIR)/boot/grub/grub.cfg
 	grub2-mkrescue -o $@ $(ISODIR)
+	rm /tmp/grub.*
 
 kernel.bin: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $@

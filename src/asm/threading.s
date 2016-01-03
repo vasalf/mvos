@@ -13,19 +13,9 @@ _asm_run_thread:
     popl    %ebx
     movl    %ebx,   _asm_threading_remember_eip
     movl    %eax,   %esp
-    #popa
+    popa
 
-    /*pushl   (_asm_threading_remember_eip)
-    pushl   $printf_format
-    call    printf
-  
-  _jmp:
-    hlt
-    jmp _jmp*/
-
-    #jmp      _asm_threading_remember_eip
     pushl    _asm_threading_remember_eip
-    #jmp     %ebx
     sti
     ret
      

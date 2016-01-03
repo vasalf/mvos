@@ -2,3 +2,6 @@ mvos.iso
 obj
 iso
 kernel.bin
+.make/buildopts
+.make/depends
+.make/options
